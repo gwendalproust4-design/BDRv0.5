@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Bureau du Rap</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* Style spécifique pour l'animation de fond du login */
+        body.login-page {
+            background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #1a1a1a);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0;
+        }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    </style>
+</head>
+<body class="login-page">
+
+    <div class="login-card">
+        <img src="img/BDR_logo-removebg-preview.png" alt="Logo" class="login-logo">
+        
+        <h1 style="margin: 0; font-size: 2rem; font-weight: 800;">ACCÈS RESTREINT</h1>
+        <p style="color: var(--text-gray); margin-top: 10px; margin-bottom: 30px;">Rejoignez l'élite du rap français.</p>
+
+        <div class="auth-tabs">
+            <button class="auth-tab active" onclick="switchTab('login')">Connexion</button>
+            <button class="auth-tab" onclick="switchTab('register')">Inscription</button>
+        </div>
+
+        <form id="loginForm" class="auth-form">
+            <div class="input-field-container">
+                <label class="input-label">Nom d'utilisateur</label>
+                <div class="input-group">
+                    <i>👤</i><input type="text" id="loginUser" class="login-input" required>
+                </div>
+            </div>
+            <div class="input-field-container">
+                <label class="input-label">Mot de passe</label>
+                <div class="input-group">
+                    <i>🔒</i><input type="password" id="loginPass" class="login-input" required>
+                </div>
+            </div>
+            <button type="submit" class="action-btn">ENTRER</button>
+        </form>
+
+        <form id="registerForm" class="auth-form" style="display: none;">
+            <div class="input-field-container">
+                <label class="input-label">Choisir un pseudo</label>
+                <div class="input-group">
+                    <i>✨</i><input type="text" id="regUser" class="login-input" required>
+                </div>
+            </div>
+            <div class="input-field-container">
+                <label class="input-label">Choisir un mot de passe</label>
+                <div class="input-group">
+                    <i>🔑</i><input type="password" id="regPass" class="login-input" required>
+                </div>
+            </div>
+            <button type="submit" class="action-btn register-btn">CRÉER MON COMPTE</button>
+        </form>
+
+        <p id="authMessage" style="min-height: 25px; margin-top: 20px; font-weight: bold;"></p>
+
+        <div class="divider"><span>OU</span></div>
+
+        <button onclick="handleVisitor()" class="visitor-btn">👀 Continuer en tant que visiteur</button>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // Logique de bascule entre Connexion et Inscription
+        function switchTab(tab) {
+            const forms = document.querySelectorAll('.auth-form');
+            const tabs = document.querySelectorAll('.auth-tab');
+            document.getElementById('authMessage').textContent = '';
+
+            if (tab === 'login') {
+                forms[0].style.display = 'block'; forms[1].style.display = 'none';
+                tabs[0].classList.add('active'); tabs[1].classList.remove('active');
+            } else {
+                forms[0].style.display = 'none'; forms[1].style.display = 'block';
+                tabs[0].classList.remove('active'); tabs[1].classList.add('active');
+            }
+        }
+
+        // Gestion Connexion
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const res = loginUser(document.getElementById('loginUser').value, document.getElementById('loginPass').value);
+            if(res.success) window.location.href = 'index.html';
+            else showMessage(res.message, '#ff4500');
+        });
+
+        // Gestion Inscription
+        document.getElementById('registerForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const res = registerUser(document.getElementById('regUser').value, document.getElementById('regPass').value);
+            if(res.success) {
+                showMessage(res.message, '#00ff00');
+                setTimeout(() => switchTab('login'), 1500);
+            } else {
+                showMessage(res.message, '#ff4500');
+            }
+        });
+
+        function showMessage(msg, color) {
+            const m = document.getElementById('authMessage');
+            m.textContent = msg; m.style.color = color;
+        }
+
+        function handleVisitor() {
+            loginVisitor();
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Profil - Bureau du Rap</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <a href="index.html" class="back-btn">← Retour à l'accueil</a>
+
+    <div class="profile-wrapper">
+        <div class="profile-card reveal">
+            <div class="profile-avatar-container" onclick="document.getElementById('fileInput').click()">
+                <img src="img/BDR_logo-removebg-preview.png" id="avatarImg" class="profile-avatar" alt="Avatar">
+                <div class="profile-edit-overlay">📷</div>
+            </div>
+            <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="updateAvatar(this)">
+
+            <h1 style="margin: 0; font-size: 2.5rem;">Mon Profil</h1>
+            <p style="color: var(--text-gray); font-size: 1.2rem; margin-bottom: 2rem;">
+                Bienvenue, <strong id="usernameDisplay" style="color: var(--accent);">...</strong>
+            </p>
+
+            <div class="profile-stats">
+                <p><strong>Statut :</strong> <span style="color: #00ff00;">● Connecté</span></p>
+                <p><strong>Date :</strong> <span id="dateDisplay"></span></p>
+            </div>
+
+            <button onclick="logout()" class="filter-btn logout-btn">Se déconnecter</button>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // Initialisation
+        document.getElementById('dateDisplay').innerText = new Date().toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        const user = JSON.parse(sessionStorage.getItem('bdr_current_user'));
+        
+        if (user) {
+            document.getElementById('usernameDisplay').innerText = user.username;
+            // Charger avatar
+            const savedAvatar = localStorage.getItem('bdr_avatar_' + user.username);
+            if(savedAvatar) document.getElementById('avatarImg').src = savedAvatar;
+        }
+
+        // Mise à jour Avatar
+        function updateAvatar(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('avatarImg').src = e.target.result;
+                    localStorage.setItem('bdr_avatar_' + user.username, e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+</body>
+</html>

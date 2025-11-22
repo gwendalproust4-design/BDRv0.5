@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bureau du Rap - Encyclopédie</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar">
+        <div class="logo-container">
+            <a href="index.html" style="text-decoration:none; display:flex; align-items:center; gap:15px;">
+                <img src="img/BDR_logo-removebg-preview.png" alt="Bureau du Rap Logo" class="logo-img">
+                <span class="logo-text">BUREAU <span class="logo-accent">DU RAP</span></span>
+            </a>
+        </div>
+        
+        <div class="nav-right" style="display:flex; gap:15px; align-items:center;">
+            <input type="text" class="search-bar" placeholder="Rechercher un rappeur..." id="searchInput">
+            
+            <a href="profil.html" class="filter-btn" id="profileBtn" style="text-decoration:none; padding: 8px 20px; display:flex; align-items:center; border: 1px solid rgba(255,255,255,0.1);">
+                <span id="navProfileIcon" style="font-size: 1.2rem; margin-right:8px;">👤</span>
+                <span id="navUsername">Mon Compte</span>
+            </a>
+        </div>
+    </nav>
+
+    <header class="hero reveal delay-1">
+        <h1>L'Encyclopédie du <span class="text-gradient">Rap Français</span></h1>
+        <p>La base de données ultime. Explorez les profils des artistes qui ont marqué l'histoire.</p>
+    </header>
+
+    <div class="filters-container reveal delay-2">
+        <div class="status-filters">
+            <button class="filter-btn active" data-filter="all">Tout voir</button>
+            <button class="filter-btn" data-filter="legende">🏆 Légendes</button>
+            <button class="filter-btn" data-filter="tendance">🔥 Tendances</button>
+            <button class="filter-btn" data-filter="pepite">💎 Pépites</button>
+            <button class="filter-btn" data-filter="classique">💿 Classiques</button>
+        </div>
+
+        <div class="style-filter-wrapper">
+            <select id="styleFilter" class="style-select">
+                <option value="all">🎵 Tous les styles</option>
+                <option value="Trap">Trap</option>
+                <option value="Drill">Drill</option>
+                <option value="Boom Bap">Boom Bap</option>
+                <option value="New Wave">New Wave</option>
+                <option value="Mélo / Club">Mélo / Club</option>
+                <option value="Cloud / Aérien">Cloud / Aérien</option>
+                <option value="Technique / Lyriciste">Technique / Lyriciste</option>
+                <option value="Jersey">Jersey</option>
+            </select>
+        </div>
+    </div>
+
+    <main class="container">
+        <div class="grid" id="rapperGrid">
+            </div>
+        
+        <div class="load-more-container">
+            <button id="loadMoreBtn" class="filter-btn" style="display: none;">Voir plus d'artistes</button>
+        </div>
+    </main>
+
+    <script src="auth.js"></script> <script src="database.js"></script> 
+    <script src="script.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const user = JSON.parse(sessionStorage.getItem('bdr_current_user'));
+            if (user) {
+                document.getElementById('navUsername').innerText = user.username;
+                
+                // Charger l'avatar s'il existe
+                const savedAvatar = localStorage.getItem('bdr_avatar_' + user.username);
+                if(savedAvatar) {
+                    const icon = document.getElementById('navProfileIcon');
+                    icon.innerHTML = `<img src="${savedAvatar}" style="width:25px; height:25px; border-radius:50%; object-fit:cover;">`;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
+</body>
+</html>

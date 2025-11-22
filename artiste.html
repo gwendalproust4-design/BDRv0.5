@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Artiste</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <a href="index.html" class="back-btn">← Retour</a>
+
+    <header class="artist-header" id="headerBg">
+        <div class="artist-info">
+            <span class="artist-city" id="artistCity">Ville</span>
+            <h1 class="artist-name" id="artistName">Artiste</h1>
+            <p id="artistStats" style="color: #b3b3b3; font-weight: 600; margin-top: 10px; font-size: 1.1rem;"></p>
+        </div>
+    </header>
+
+    <section class="bio-section" id="artistBio">
+        Chargement...
+    </section>
+
+    <section class="disco-section">
+        <h2 class="section-title">Projets Marquants (Cliquez pour voir les titres)</h2>
+        <div class="albums-grid" id="albumsGrid"></div>
+    </section>
+
+    <div id="tracklistModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="modalAlbumTitle" style="color: var(--accent); margin-top: 0;">Titre</h2>
+            <p id="modalAlbumYear" style="color: gray; font-size: 0.9rem; margin-bottom: 1rem;">Année</p>
+            <ul id="modalTracklist" class="tracklist"></ul>
+        </div>
+    </div>
+
+    <script src="database.js"></script>
+
+    <script>
+        // Récupération des infos artiste
+        const params = new URLSearchParams(window.location.search);
+        const artistId = params.get('id');
+        const artiste = dataRappeurs.find(r => r.id === artistId);
+
+        // Gestion de la fenêtre Modale (Tracklist)
+        const modal = document.getElementById("tracklistModal");
+        const spanClose = document.getElementsByClassName("close-modal")[0];
+        const modalTitle = document.getElementById("modalAlbumTitle");
+        const modalYear = document.getElementById("modalAlbumYear");
+        const modalList = document.getElementById("modalTracklist");
+
+        // Fermer la modale
+        spanClose.onclick = function() { modal.style.display = "none"; }
+        window.onclick = function(event) { if (event.target == modal) { modal.style.display = "none"; } }
+
+        // Fonction pour ouvrir la tracklist
+        function openTracklist(album) {
+            modalTitle.innerText = album.titre;
+            modalYear.innerText = album.annee;
+            modalList.innerHTML = ""; // On vide la liste
+
+            if(album.tracks && album.tracks.length > 0) {
+                album.tracks.forEach((track, index) => {
+                    modalList.innerHTML += `<li><span class="track-num">${index + 1}</span> ${track}</li>`;
+                });
+            } else {
+                modalList.innerHTML = "<li style='text-align:center; font-style:italic; color:gray;'>Tracklist non disponible.</li>";
+            }
+            modal.style.display = "flex";
+        }
+
+        if (artiste) {
+            document.getElementById('artistName').innerText = artiste.nom;
+            document.getElementById('artistStats').innerText = "🎧 " + (artiste.chiffres || "Donnée non dispo");
+            
+            let statutTexte = "ARTISTE";
+            if(artiste.statut === 'legende') statutTexte = "👑 LÉGENDE";
+            else if(artiste.statut === 'pepite') statutTexte = "💎 PÉPITE";
+            else if(artiste.statut === 'tendance') statutTexte = "🔥 TENDANCE";
+            document.getElementById('artistCity').innerText = statutTexte;
+
+            document.getElementById('headerBg').style.backgroundImage = `linear-gradient(to bottom, rgba(15,15,15,0.3), #0f0f0f), url('${artiste.image}')`;
+            
+            document.getElementById('artistBio').innerHTML = artiste.bioLongue ? artiste.bioLongue : artiste.bio;
+
+            const albumsGrid = document.getElementById('albumsGrid');
+            if (artiste.albums && artiste.albums.length > 0) {
+                artiste.albums.forEach(album => {
+                    // Dans le script de artiste.html
+const div = document.createElement('div');
+div.className = 'album-card'; // C'est cette classe qui permet l'animation
+div.innerHTML = `
+    <img src="${album.cover}" class="album-cover" style="transition: transform 0.3s ease;">
+    <div class="album-info">
+        <h3 class="album-title">${album.titre}</h3>
+        <span class="album-year">${album.annee}</span>
+    </div>
+`;
+
+                    
+                    div.addEventListener('click', () => openTracklist(album));
+                    albumsGrid.appendChild(div);
+                });
+            } else {
+                albumsGrid.innerHTML = "<p style='color:gray'>Aucun album listé.</p>";
+            }
+        } else {
+            document.body.innerHTML = "<h1 style='color:white;text-align:center;margin-top:50px'>Artiste introuvable 😢 <br><a href='index.html' style='color:#8A2BE2'>Retour</a></h1>";
+        }
+    </script>
+</body>
+</html>
